@@ -9,6 +9,7 @@ public class Timer : MonoBehaviour
     private TMP_Text _timerText;
 
     [SerializeField] private float currentTime;
+    private float lastTime;
 
     private bool _isRunning;
 
@@ -46,13 +47,14 @@ public class Timer : MonoBehaviour
     {
         _isRunning = false;
         _timerText.text = "";
+        lastTime = currentTime;
         currentTime = 0;
     }
 
     private void TimerEventManagerOnTimerStart() => _isRunning = true;
 
-    public float GetCurrentTime()
+    public float GetLastRecord()
     {
-        return currentTime;
+        return lastTime;
     }
 }

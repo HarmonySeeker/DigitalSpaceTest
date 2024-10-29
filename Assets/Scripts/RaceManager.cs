@@ -15,12 +15,12 @@ public class RaceManager : MonoBehaviour
         if (instance == null)
             instance = this;
 
-        records = new List<float>();
+        instance.records = new List<float>();
     }
 
     private void OnEnable()
     {
-        TimerEventManager.TimerStop += TimerEventManagerOnTimerStop;
+        TimerEventManager.TimerStop += instance.TimerEventManagerOnTimerStop;
     }
 
     private void Start()
@@ -29,6 +29,6 @@ public class RaceManager : MonoBehaviour
 
     private void TimerEventManagerOnTimerStop()
     {
-        records.Add(timer.GetCurrentTime());
+        instance.records.Add(timer.GetLastRecord());
     }
 }
