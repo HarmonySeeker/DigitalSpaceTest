@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +12,8 @@ public class PlayerController : MonoBehaviour
     private Vector2 _input;
     private CharacterController _characterController;
     private Vector3 _direction;
-    [SerializeField] private float speed;
+
+    [SerializeField] private Movement movement;
 
     #endregion
 
@@ -66,7 +68,10 @@ public class PlayerController : MonoBehaviour
 
     private void ApplyMovement()
     {
-        _characterController.Move(speed * Time.deltaTime * _direction);
+        var targetSpeed = movement.isSprinting ? movement.speed * movement.multiplier : movement.speed;
+        movement.currentSpeed = Mathf.MoveTowards(movement.currentSpeed, targetSpeed, movement.acceleration * Time.deltaTime);
+
+        _characterController.Move(_direction * movement.currentSpeed * Time.deltaTime);
     }
 
     private void ApplyGravity()
@@ -89,6 +94,11 @@ public class PlayerController : MonoBehaviour
         _direction = new Vector3(_input.x, 0.0f, _input.y);
     }
 
+    public void Sprint(InputAction.CallbackContext context)
+    {
+        movement.isSprinting = context.started || context.performed;
+    }
+
     public void Jump(InputAction.CallbackContext context)
     {
         if (!context.started) return;
@@ -97,6 +107,14 @@ public class PlayerController : MonoBehaviour
 
         _numberOfJumps++;
         _velocity = jumpPower;
+    }
+
+    public void Interact(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+
+        }
     }
 
     private IEnumerator WaitForLanding()
@@ -108,4 +126,15 @@ public class PlayerController : MonoBehaviour
     }
 
     private bool IsGrounded() => _characterController.isGrounded;
+}
+
+[Serializable]
+public struct Movement
+{
+    public float speed;
+    public float multiplier;
+    public float acceleration;
+
+    [HideInInspector] public bool isSprinting;
+    [HideInInspector] public float currentSpeed;
 }
