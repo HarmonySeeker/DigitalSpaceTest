@@ -1,18 +1,34 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class RaceManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public static RaceManager instance;
+
+    [SerializeField] private List<float> records;
+    [SerializeField] private Timer timer;
+
+    private void Awake()
     {
-        
+        if (instance == null)
+            instance = this;
+
+        records = new List<float>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnEnable()
     {
-        
+        TimerEventManager.TimerStop += TimerEventManagerOnTimerStop;
+    }
+
+    private void Start()
+    {
+    }
+
+    private void TimerEventManagerOnTimerStop()
+    {
+        records.Add(timer.GetCurrentTime());
     }
 }

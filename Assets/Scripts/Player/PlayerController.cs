@@ -39,6 +39,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int maxNumJumps = 2;
 
     #endregion
+
+    [SerializeField] private float interactRange;
     
     private void Awake()
     {
@@ -113,7 +115,16 @@ public class PlayerController : MonoBehaviour
     {
         if (context.performed)
         {
+            Ray r = new Ray(_mainCamera.transform.position, _mainCamera.transform.forward);
+            Debug.DrawLine(r.origin, r.origin + r.direction * interactRange, new Color(1f, 0f, 0f), 500f);
 
+            if (Physics.Raycast(r, out RaycastHit hitInfo, interactRange))
+            {
+                if (hitInfo.collider.gameObject.TryGetComponent(out IInteractableObject interactableObj))
+                {
+                    interactableObj.InteractableAction();
+                }
+            }
         }
     }
 

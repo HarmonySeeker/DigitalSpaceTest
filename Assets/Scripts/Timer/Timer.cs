@@ -46,7 +46,13 @@ public class Timer : MonoBehaviour
     {
         _isRunning = false;
         _timerText.text = "";
+        currentTime = 0;
     }
 
     private void TimerEventManagerOnTimerStart() => _isRunning = true;
+
+    public float GetCurrentTime()
+    {
+        return currentTime;
+    }
 }
