@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System;
+using UnityEngine.Events;
+using Unity.VisualScripting;
 
 public class Timer : MonoBehaviour
 {
     private TMP_Text _timerText;
 
     [SerializeField] private float currentTime;
-    private float lastTime;
 
     private bool _isRunning;
 
     private void Awake()
     {
         _timerText = GetComponent<TMP_Text>();
+        _timerText.text = "";
     }
 
     private void Update()
@@ -47,14 +49,9 @@ public class Timer : MonoBehaviour
     {
         _isRunning = false;
         _timerText.text = "";
-        lastTime = currentTime;
+        TimerEventManager.OnRecordUpdate(currentTime);
         currentTime = 0;
     }
 
     private void TimerEventManagerOnTimerStart() => _isRunning = true;
-
-    public float GetLastRecord()
-    {
-        return lastTime;
-    }
 }
