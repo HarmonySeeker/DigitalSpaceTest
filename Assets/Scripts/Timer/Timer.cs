@@ -43,15 +43,23 @@ public class Timer : MonoBehaviour
         TimerEventManager.TimerUpdate -= TimerEventManagerOnTimerUpdate;
     }
 
+    public bool IsRaceGoing() => _isRunning;
+
     private void TimerEventManagerOnTimerUpdate(float value) => currentTime = value;
 
     private void TimerEventManagerOnTimerStop()
     {
+        TimerEventManager.OnRecordUpdate(currentTime);
+        
         _isRunning = false;
         _timerText.text = "";
-        TimerEventManager.OnRecordUpdate(currentTime);
         currentTime = 0;
     }
 
-    private void TimerEventManagerOnTimerStart() => _isRunning = true;
+    private void TimerEventManagerOnTimerStart()
+    {
+        _isRunning = true;
+        _timerText.text = "";
+        currentTime = 0;
+    }
 }

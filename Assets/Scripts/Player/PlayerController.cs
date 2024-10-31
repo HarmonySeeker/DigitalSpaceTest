@@ -2,7 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.PlayerLoop;
+using UnityEngine.UIElements;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
@@ -41,7 +44,13 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     [SerializeField] private float interactRange;
-    
+
+    #region Events
+    public event UnityAction PlayerJump;
+
+    public void OnPlayerJump() => PlayerJump?.Invoke();
+    #endregion
+
     private void Awake()
     {
         _characterController = GetComponent<CharacterController>();
@@ -53,6 +62,12 @@ public class PlayerController : MonoBehaviour
         ApplyRotation();
         ApplyGravity();
         ApplyMovement();
+        PlaySounds();
+    }
+
+    private void PlaySounds()
+    {
+
     }
 
     private void ApplyRotation()
@@ -94,6 +109,7 @@ public class PlayerController : MonoBehaviour
     {
         _input = context.ReadValue<Vector2>();
         _direction = new Vector3(_input.x, 0.0f, _input.y);
+        //AudioManager.Instance.PlaySound2D(AudioNames.Sound.PlayerWalk);
     }
 
     public void Sprint(InputAction.CallbackContext context)
@@ -109,6 +125,8 @@ public class PlayerController : MonoBehaviour
 
         _numberOfJumps++;
         _velocity = jumpPower;
+
+        OnPlayerJump();
     }
 
     public void Interact(InputAction.CallbackContext context)
@@ -118,15 +136,16 @@ public class PlayerController : MonoBehaviour
             Ray r = new Ray(_mainCamera.transform.position, _mainCamera.transform.forward);
             Debug.DrawLine(r.origin, r.origin + r.direction * interactRange, new Color(1f, 0f, 0f), 500f);
 
-            if (Physics.Raycast(r, out RaycastHit hitInfo, interactRange))
+            if (Physics.Raycast(r, out RaycastHit hitInfo, interactRange)
+                && hitInfo.collider.gameObject.CompareTag("Interactable"))
             {
-                if (hitInfo.collider.gameObject.TryGetComponent(out IInteractableObject interactableObj))
-                {
-                    interactableObj.InteractableAction();
-                }
+                hitInfo.collider.gameObject.TryGetComponent(out IInteractableObject interactableObj);
+                interactableObj.InteractableAction();
             }
         }
     }
+
+    public bool IsSprinting() => movement.isSprinting;
 
     private IEnumerator WaitForLanding()
     {

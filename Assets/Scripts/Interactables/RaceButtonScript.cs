@@ -10,8 +10,14 @@ public class RaceButtonScript : MonoBehaviour, IInteractableObject
     public void InteractableAction()
     {
         if (buttonType == ButtonType.StartButton)
+        {
+            AudioManager.Instance.PlaySound3D(AudioNames.Sound.StartRace, transform.position);
             TimerEventManager.OnTimerStart();
+        }
         else
+        {
+            AudioManager.Instance.PlaySound3D(AudioNames.Sound.FinishRace, transform.position);
             TimerEventManager.OnTimerEnd();
+        }
     }
 }

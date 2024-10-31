@@ -37,14 +37,17 @@ public class timingsTableLogic : MonoBehaviour
 
     private void TimerEventManagerOnRecordUpdate(float newEntry)
     {
-        timings.Add(newEntry);
+        if (timer.IsRaceGoing())
+        {
+            timings.Add(newEntry);
 
-        indexText.text = timings.Count.ToString();
+            indexText.text = timings.Count.ToString();
 
-        TimeSpan timeSpan = TimeSpan.FromSeconds(newEntry);
-        timingText.text = timeSpan.ToString(@"mm\:ss\:ff");
+            TimeSpan timeSpan = TimeSpan.FromSeconds(newEntry);
+            timingText.text = timeSpan.ToString(@"mm\:ss\:ff");
 
-        Instantiate(index, indexParent.transform);
-        Instantiate(timing, timingParent.transform);
+            Instantiate(index, indexParent.transform);
+            Instantiate(timing, timingParent.transform);
+        }
     }
 }

@@ -4,16 +4,41 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-    private static AudioManager instance;
+    public static AudioManager Instance;
+
+    [SerializeField]
+    private AudioLibrary sfxLibrary;
+    [SerializeField]
+    private AudioSource sfx2DSource;
 
     private void Awake()
     {
-        if (instance == null)
-            instance = this;
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
     }
 
-    public static void PlaySound()
+    public void PlaySound3D(AudioClip clip, Vector3 pos)
     {
+        if (clip != null)
+        {
+            AudioSource.PlayClipAtPoint(clip, pos);
+        }
+    }
 
+    public void PlaySound3D(AudioNames.Sound soundName, Vector3 pos)
+    {
+        PlaySound3D(sfxLibrary.GetClipFromName(soundName), pos);
+    }
+
+    public void PlaySound2D(AudioNames.Sound soundName)
+    {
+        sfx2DSource.PlayOneShot(sfxLibrary.GetClipFromName(soundName));
     }
 }
